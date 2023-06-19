@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/tooti31/ggrouter"
 	"github.com/tooti31/ggrouter/exrouter"
 )
 
@@ -47,10 +48,10 @@ func UserCooldown(cooldown time.Duration, catch CatchFunc) exrouter.MiddlewareFu
 
 	return func(fn exrouter.HandlerFunc) exrouter.HandlerFunc {
 		return func(ctx *exrouter.Context) {
-			user, ok := table[ctx.Msg.Author.ID]
+			user, ok := table[ctx.Msg.CreatedBy]
 			if !ok {
-				table[ctx.Msg.Author.ID] = map[*dgrouter.Route]time.Time{}
-				user = table[ctx.Msg.Author.ID]
+				table[ctx.Msg.CreatedBy] = map[*dgrouter.Route]time.Time{}
+				user = table[ctx.Msg.CreatedBy]
 			}
 
 			// Retrieve the last time this command was used
@@ -84,10 +85,6 @@ func RequireNSFW(catch CatchFunc) exrouter.MiddlewareFunc {
 				callCatch(ctx, catch, err)
 				return
 			}
-			if !channel.NSFW {
-				callCatch(ctx, catch, ErrChannelNotNSFW)
-				return
-			}
 			ctx.Set(ctxChannel, channel)
 			fn(ctx)
 		}
@@ -98,7 +95,7 @@ func RequireNSFW(catch CatchFunc) exrouter.MiddlewareFunc {
 func GetGuild(catch CatchFunc) exrouter.MiddlewareFunc {
 	return func(fn exrouter.HandlerFunc) exrouter.HandlerFunc {
 		return func(ctx *exrouter.Context) {
-			guild, err := getGuild(ctx.Ses, ctx.Msg.GuildID)
+			guild, err := getGuild(ctx.Ses, ctx.Msg.ServerID)
 			if err != nil {
 				callCatch(ctx, catch, err)
 				return
@@ -114,7 +111,7 @@ func GetGuild(catch CatchFunc) exrouter.MiddlewareFunc {
 func GetChannel(catch CatchFunc) exrouter.MiddlewareFunc {
 	return func(fn exrouter.HandlerFunc) exrouter.HandlerFunc {
 		return func(ctx *exrouter.Context) {
-			channel, err := getChannel(ctx.Ses, ctx.Msg.GuildID)
+			channel, err := getChannel(ctx.Ses, ctx.Msg.ServerID)
 			if err != nil {
 				callCatch(ctx, catch, err)
 				return
@@ -130,7 +127,7 @@ func GetChannel(catch CatchFunc) exrouter.MiddlewareFunc {
 func GetMember(catch CatchFunc) exrouter.MiddlewareFunc {
 	return func(fn exrouter.HandlerFunc) exrouter.HandlerFunc {
 		return func(ctx *exrouter.Context) {
-			member, err := getMember(ctx.Ses, ctx.Msg.GuildID, ctx.Msg.Author.ID)
+			member, err := getMember(ctx.Ses, ctx.Msg.ServerID, ctx.Msg.CreatedBy)
 			if err != nil {
 				callCatch(ctx, catch, err)
 			}

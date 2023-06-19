@@ -1,7 +1,9 @@
 # Exmiddleware
+
 Collection of middleware for common things
 
 ## Example
+
 ```go
 router.Group(func(r *exrouter.Route) {
 	// Default callback function to use when a middleware has an error

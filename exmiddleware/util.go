@@ -1,30 +1,30 @@
 package exmiddleware
 
 import (
-	"github.com/bwmarrin/discordgo"
+	"github.com/itschip/guildedgo"
 	"github.com/tooti31/ggrouter/exrouter"
 )
 
-func getChannel(s *discordgo.Session, channelID string) (*discordgo.Channel, error) {
-	channel, err := s.State.Channel(channelID)
+func getChannel(s *guildedgo.Client, channelID string) (*guildedgo.ServerChannel, error) {
+	channel, err := s.Channel.GetChannel(channelID)
 	if err != nil {
-		return s.Channel(channelID)
+		return s.Channel.GetChannel(channelID)
 	}
 	return channel, err
 }
 
-func getGuild(s *discordgo.Session, guildID string) (*discordgo.Guild, error) {
-	guild, err := s.State.Guild(guildID)
+func getGuild(s *guildedgo.Client, guildID string) (*guildedgo.Server, error) {
+	guild, err := s.Server.GetServer(guildID)
 	if err != nil {
-		return s.Guild(guildID)
+		return s.Server.GetServer(guildID)
 	}
 	return guild, err
 }
 
-func getMember(s *discordgo.Session, guildID, userID string) (*discordgo.Member, error) {
-	member, err := s.State.Member(guildID, userID)
+func getMember(s *guildedgo.Client, guildID, userID string) (*guildedgo.ServerMember, error) {
+	member, err := s.Members.GetServerMember(guildID, userID)
 	if err != nil {
-		return s.GuildMember(guildID, userID)
+		return s.Members.GetServerMember(guildID, userID)
 	}
 	return member, err
 }

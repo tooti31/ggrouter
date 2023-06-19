@@ -4,7 +4,8 @@ import (
 	"log"
 	"testing"
 
-	"github.com/bwmarrin/discordgo"
+	"github.com/itschip/guildedgo"
+	"github.com/tooti31/ggrouter"
 	"github.com/tooti31/ggrouter/exrouter"
 )
 
@@ -50,12 +51,12 @@ func TestRouter(t *testing.T) {
 
 	for _, v := range messages {
 		// Construct mock message
-		msg := &discordgo.Message{
-			Author: &discordgo.User{
-				Username: "necroforger",
-				Bot:      false,
-			},
-			Content: v,
+		msg := &guildedgo.ChatMessage{
+			ID:        "xcwcqwc",
+			Type:      "bot",
+			ServerID:  "greg3",
+			ChannelID: "f32f32",
+			Content:   v,
 		}
 
 		// Attempt to find and execute the route for this message

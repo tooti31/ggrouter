@@ -20,10 +20,11 @@ type MiddlewareFunc func(HandlerFunc) HandlerFunc
 // For example, setting the routes category in the callback will cause
 // All future added routes to inherit the category.
 // example:
-// Group(func (r *Route) {
-//    r.Cat("stuff")
-//    r.On("thing", nil).Desc("the category of this function will be stuff")
-// })
+//
+//	Group(func (r *Route) {
+//	   r.Cat("stuff")
+//	   r.On("thing", nil).Desc("the category of this function will be stuff")
+//	})
 func (r *Route) Group(fn func(r *Route)) *Route {
 	rt := New()
 	fn(rt)
@@ -40,8 +41,9 @@ func (r *Route) Use(fn ...MiddlewareFunc) *Route {
 }
 
 // On registers a route with the name you supply
-//    name    : name of the route to create
-//    handler : handler function
+//
+//	name    : name of the route to create
+//	handler : handler function
 func (r *Route) On(name string, handler HandlerFunc) *Route {
 	rt := r.OnMatch(name, nil, handler)
 	rt.Matcher = NewNameMatcher(rt)
@@ -49,9 +51,10 @@ func (r *Route) On(name string, handler HandlerFunc) *Route {
 }
 
 // OnMatch adds a handler for the given route
-//    name    : name of the route to add
-//    matcher : matcher function used to match the route
-//    handler : handler function for the route
+//
+//	name    : name of the route to add
+//	matcher : matcher function used to match the route
+//	handler : handler function for the route
 func (r *Route) OnMatch(name string, matcher func(string) bool, handler HandlerFunc) *Route {
 	if rt := r.Find(name); rt != nil {
 		return rt
@@ -77,7 +80,8 @@ func (r *Route) OnMatch(name string, matcher func(string) bool, handler HandlerF
 
 // AddRoute adds a route to the router
 // Will return RouteAlreadyExists error on failure
-//    route : route to add
+//
+//	route : route to add
 func (r *Route) AddRoute(route *Route) error {
 	// Check if the route already exists
 	if rt := r.Find(route.Name); rt != nil {
@@ -90,7 +94,8 @@ func (r *Route) AddRoute(route *Route) error {
 }
 
 // RemoveRoute removes a route from the router
-//     route : route to remove
+//
+//	route : route to remove
 func (r *Route) RemoveRoute(route *Route) error {
 	for i, v := range r.Routes {
 		if v == route {
@@ -103,7 +108,8 @@ func (r *Route) RemoveRoute(route *Route) error {
 
 // Find finds a route with the given name
 // It will return nil if nothing is found
-//    name : name of route to find
+//
+//	name : name of route to find
 func (r *Route) Find(name string) *Route {
 	for _, v := range r.Routes {
 		if v.Matcher(name) {
@@ -116,9 +122,10 @@ func (r *Route) Find(name string) *Route {
 // FindFull a full path of routes by searching through their subroutes
 // Until the deepest match is found.
 // It will return the route matched and the depth it was found at
-//     args : path of route you wish to find
-//            ex. FindFull(command, subroute1, subroute2, nonexistent)
-//            will return the deepest found match, which will be subroute2
+//
+//	args : path of route you wish to find
+//	       ex. FindFull(command, subroute1, subroute2, nonexistent)
+//	       will return the deepest found match, which will be subroute2
 func (r *Route) FindFull(args ...string) (*Route, int) {
 	nr := r
 	i := 0
