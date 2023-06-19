@@ -1,0 +1,8 @@
+*.test
+*.exe
+debug
+*.db
+*.db.lock
+*.mod
+*.sum
+.idea/
