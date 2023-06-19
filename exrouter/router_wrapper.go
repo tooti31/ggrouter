@@ -1,7 +1,6 @@
 package exrouter
 
 import (
-	"fmt"
 	"github.com/itschip/guildedgo"
 	"github.com/tooti31/ggrouter"
 	"strings"
@@ -84,22 +83,16 @@ func mention(s *guildedgo.Client, ids []guildedgo.MentionsUser) string {
 func (r *Route) FindAndExecute(s *guildedgo.Client, prefix string, m *guildedgo.ChatMessage) error {
 	var pf string
 
-	fmt.Println("FindAndExecute -> ChatMsg ", m)
-	fmt.Println("FindAndExecute -> Prefix ", prefix)
-
 	p := func(t string) bool {
 		return strings.HasPrefix(m.Content, t)
 	}
 
 	switch {
 	case prefix != "" && p(prefix):
-		fmt.Println("FindAndExecute -> Has prefix")
 		pf = prefix
 	case p(mention(s, m.Mentions.Users)):
-		fmt.Println("FindAndExecute -> Has Mention")
 		pf = mention(s, m.Mentions.Users)
 	default:
-		fmt.Println("FindAndExecute -> Err")
 		return dgrouter.ErrCouldNotFindRoute
 	}
 

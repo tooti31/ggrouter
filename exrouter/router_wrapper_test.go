@@ -1,7 +1,7 @@
 package exrouter_test
 
 import (
-	dgrouter "github.com/tooti31/ggrouter"
+	"github.com/tooti31/ggrouter"
 	"github.com/tooti31/ggrouter/exrouter"
 	"log"
 	"testing"
