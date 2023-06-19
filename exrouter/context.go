@@ -12,10 +12,8 @@ import (
 type Context struct {
 	// Route is the route that this command came from
 	Route *dgrouter.Route
-	//Msg   *discordgo.Message
-	Msg *guildedgo.ChatMessage
-	//Ses   *discordgo.Session
-	Ses *guildedgo.Client
+	Msg   *guildedgo.ChatMessage
+	Ses   *guildedgo.Client
 
 	// List of arguments supplied with the command
 	Args Args

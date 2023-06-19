@@ -1,6 +1,7 @@
 package exrouter
 
 import (
+	"fmt"
 	"github.com/itschip/guildedgo"
 	"github.com/tooti31/ggrouter"
 	"strings"
@@ -76,20 +77,15 @@ func mention(s *guildedgo.Client, ids []guildedgo.MentionsUser) string {
 // it looks for a message prefix which is either the prefix specified or the message is prefixed
 // with a bot mention
 //
-//	s            : discordgo session to pass to context
+//	s            : guildedgo Client to pass to context
 //	prefix       : prefix you want the bot to respond to
 //	botID        : user ID of the bot to allow you to substitute the bot ID for a prefix
-//	m            : discord message to pass to context
-func (r *Route) FindAndExecute(s *guildedgo.Client, prefix string, botID string, m *guildedgo.ChatMessage) error {
+//	m            : guildedgo.ChatMessage to pass to context
+func (r *Route) FindAndExecute(s *guildedgo.Client, prefix string, m *guildedgo.ChatMessage) error {
 	var pf string
 
-	// If the message content is only a bot mention and the mention route is not nil, send the mention route
-	if len(m.Mentions.Users) >= 0 {
-		if r.Default != nil && m.Content == mention(s, m.Mentions.Users) {
-			r.Default.Handler(NewContext(s, m, []string{""}, r.Default))
-			return nil
-		}
-	}
+	fmt.Println("FindAndExecute -> ChatMsg ", m)
+	fmt.Println("FindAndExecute -> Prefix ", prefix)
 
 	p := func(t string) bool {
 		return strings.HasPrefix(m.Content, t)
@@ -97,10 +93,13 @@ func (r *Route) FindAndExecute(s *guildedgo.Client, prefix string, botID string,
 
 	switch {
 	case prefix != "" && p(prefix):
+		fmt.Println("FindAndExecute -> Has prefix")
 		pf = prefix
 	case p(mention(s, m.Mentions.Users)):
+		fmt.Println("FindAndExecute -> Has Mention")
 		pf = mention(s, m.Mentions.Users)
 	default:
+		fmt.Println("FindAndExecute -> Err")
 		return dgrouter.ErrCouldNotFindRoute
 	}
 
