@@ -83,15 +83,27 @@ func mention(s *guildedgo.Client, ids []guildedgo.MentionsUser) string {
 func (r *Route) FindAndExecute(s *guildedgo.Client, prefix string, m *guildedgo.ChatMessage) error {
 	var pf string
 
+	user, _ := s.Users.GetOwnUser()
+
+	// If the message content is only a bot mention and the mention route is not nil, send the mention route
+	if r.Default != nil && len(m.Users) == 1 {
+		if m.Users[0].ID == user.Id {
+			r.Default.Handler(NewContext(s, m, []string{""}, r.Default))
+			return nil
+		}
+	}
+
 	p := func(t string) bool {
 		return strings.HasPrefix(m.Content, t)
 	}
 
+	bmention := mention(s, m.Users) + " "
+
 	switch {
 	case prefix != "" && p(prefix):
 		pf = prefix
-	case p(mention(s, m.Mentions.Users)):
-		pf = mention(s, m.Mentions.Users)
+	case p(bmention):
+		pf = bmention
 	default:
 		return dgrouter.ErrCouldNotFindRoute
 	}
@@ -99,7 +111,9 @@ func (r *Route) FindAndExecute(s *guildedgo.Client, prefix string, m *guildedgo.
 	command := strings.TrimPrefix(m.Content, pf)
 	args := ParseArgs(command)
 
-	if rt, depth := r.FindFull(args...); depth > 0 {
+	rt, depth := r.FindFull(args...)
+
+	if depth > 0 {
 		args = append([]string{strings.Join(args[:depth], string(separator))}, args[depth:]...)
 		rt.Handler(NewContext(s, m, args, rt))
 	} else {
